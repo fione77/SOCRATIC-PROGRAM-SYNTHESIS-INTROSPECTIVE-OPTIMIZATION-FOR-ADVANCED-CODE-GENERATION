@@ -20,10 +20,10 @@ venv\Scripts\activate
 pip install -r requirements.txt
 '''
 
-##4. Create an .env file in project root directory
+## 4. Create an .env file in project root directory
 - This project uses the 3.3 70B Instruct Model from OpenRouter
 
-##5. Run the program
+## 5. Run the program
 '''
 python socratic_gen.py
 '''
