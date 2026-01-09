@@ -5,7 +5,7 @@ Contains 100 hard problems with test cases and metadata
 import json
 
 def generate_hard_problems():
-    """Generate 100 LeetCode hard problems"""
+    """Generate LeetCode hard problems"""
     problems = []
     
     # 1. N-Queens
@@ -184,8 +184,7 @@ def generate_hard_problems():
         ]
     })
     
-    # Add more problems as needed...
-    # For now, let's keep 5 problems for testing
+    
     
     return problems
 
@@ -201,4 +200,5 @@ if __name__ == "__main__":
     # Save to file
     with open("leetcode_hard_problems.json", "w", encoding="utf-8") as f:
         json.dump(LEETCODE_HARD_PROBLEMS, f, indent=2, ensure_ascii=False)
+
     print("\n✅ Problems saved to leetcode_hard_problems.json")
