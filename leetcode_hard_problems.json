@@ -1,0 +1,561 @@
+[
+  {
+    "id": 42,
+    "title": "Trapping Rain Water",
+    "difficulty": "Hard",
+    "description": "\nGiven n non-negative integers representing an elevation map where the width of each bar is 1,\ncompute how much water it can trap after raining.\n\nExample 1:\nInput: height = [0,1,0,2,1,0,1,3,2,1,2,1]\nOutput: 6\n\nExample 2:\nInput: height = [4,2,0,3,2,5]\nOutput: 9\n\nConstraints:\n- n == height.length\n- 1 <= n <= 2 * 10^4\n- 0 <= height[i] <= 10^5\n\nREQUIREMENTS:\n- Time complexity: O(n)\n- Space complexity: O(1) ideally, O(n) acceptable\n- Must handle edge cases: empty array, single element, descending heights\n",
+    "function_signature": "def trap(height: List[int]) -> int:",
+    "optimal_time_complexity": "O(n)",
+    "optimal_space_complexity": "O(1)",
+    "optimal_solution": "\ndef trap(height):\n    if not height:\n        return 0\n    \n    left, right = 0, len(height) - 1\n    left_max = right_max = 0\n    water = 0\n    \n    while left < right:\n        if height[left] < height[right]:\n            if height[left] >= left_max:\n                left_max = height[left]\n            else:\n                water += left_max - height[left]\n            left += 1\n        else:\n            if height[right] >= right_max:\n                right_max = height[right]\n            else:\n                water += right_max - height[right]\n            right -= 1\n    \n    return water\n",
+    "test_cases": [
+      {
+        "input": {
+          "height": [
+            0,
+            1,
+            0,
+            2,
+            1,
+            0,
+            1,
+            3,
+            2,
+            1,
+            2,
+            1
+          ]
+        },
+        "expected": 6,
+        "name": "Example 1"
+      },
+      {
+        "input": {
+          "height": [
+            4,
+            2,
+            0,
+            3,
+            2,
+            5
+          ]
+        },
+        "expected": 9,
+        "name": "Example 2"
+      },
+      {
+        "input": {
+          "height": []
+        },
+        "expected": 0,
+        "name": "Empty array"
+      },
+      {
+        "input": {
+          "height": [
+            5
+          ]
+        },
+        "expected": 0,
+        "name": "Single element"
+      },
+      {
+        "input": {
+          "height": [
+            5,
+            4,
+            3,
+            2,
+            1
+          ]
+        },
+        "expected": 0,
+        "name": "Descending heights"
+      },
+      {
+        "input": {
+          "height": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        "expected": 0,
+        "name": "Ascending heights"
+      },
+      {
+        "input": {
+          "height": [
+            100000,
+            0,
+            100000
+          ]
+        },
+        "expected": 100000,
+        "name": "Large numbers"
+      }
+    ],
+    "key_edge_cases": [
+      "Empty array should return 0",
+      "Single element array should return 0",
+      "All descending heights should return 0",
+      "All ascending heights should return 0",
+      "Symmetrical valleys should work",
+      "Handle maximum constraint values"
+    ]
+  },
+  {
+    "id": 10,
+    "title": "Regular Expression Matching",
+    "difficulty": "Hard",
+    "description": "\nGiven an input string s and a pattern p, implement regular expression matching with support for '.' and '*'.\n\n'.' Matches any single character.\n'*' Matches zero or more of the preceding element.\n\nThe matching should cover the entire input string (not partial).\n\nExample 1:\nInput: s = \"aa\", p = \"a\"\nOutput: false\n\nExample 2:\nInput: s = \"aa\", p = \"a*\"\nOutput: true\n\nExample 3:\nInput: s = \"ab\", p = \".*\"\nOutput: true\n\nConstraints:\n- 1 <= s.length <= 20\n- 1 <= p.length <= 30\n- s contains only lowercase English letters.\n- p contains only lowercase English letters, '.', and '*'.\n- It is guaranteed for each appearance of the character '*', there will be a previous valid character to match.\n\nREQUIREMENTS:\n- Time complexity: O(m*n) where m = len(s), n = len(p)\n- Space complexity: O(m*n) for DP solution\n",
+    "function_signature": "def isMatch(s: str, p: str) -> bool:",
+    "optimal_time_complexity": "O(m*n)",
+    "optimal_space_complexity": "O(m*n)",
+    "optimal_solution": "\ndef isMatch(s, p):\n    m, n = len(s), len(p)\n    dp = [[False] * (n + 1) for _ in range(m + 1)]\n    dp[0][0] = True\n    \n    # Handle patterns like a*, a*b*, a*b*c*\n    for j in range(2, n + 1):\n        if p[j-1] == '*':\n            dp[0][j] = dp[0][j-2]\n    \n    for i in range(1, m + 1):\n        for j in range(1, n + 1):\n            if p[j-1] == s[i-1] or p[j-1] == '.':\n                dp[i][j] = dp[i-1][j-1]\n            elif p[j-1] == '*':\n                dp[i][j] = dp[i][j-2]  # zero occurrences\n                if p[j-2] == s[i-1] or p[j-2] == '.':\n                    dp[i][j] = dp[i][j] or dp[i-1][j]  # one or more occurrences\n    \n    return dp[m][n]\n",
+    "test_cases": [
+      {
+        "input": {
+          "s": "aa",
+          "p": "a"
+        },
+        "expected": false,
+        "name": "Simple mismatch"
+      },
+      {
+        "input": {
+          "s": "aa",
+          "p": "a*"
+        },
+        "expected": true,
+        "name": "Star match"
+      },
+      {
+        "input": {
+          "s": "ab",
+          "p": ".*"
+        },
+        "expected": true,
+        "name": "Dot star"
+      },
+      {
+        "input": {
+          "s": "aab",
+          "p": "c*a*b"
+        },
+        "expected": true,
+        "name": "Complex pattern"
+      },
+      {
+        "input": {
+          "s": "mississippi",
+          "p": "mis*is*p*."
+        },
+        "expected": false,
+        "name": "LeetCode example"
+      },
+      {
+        "input": {
+          "s": "",
+          "p": "a*"
+        },
+        "expected": true,
+        "name": "Empty string with star"
+      },
+      {
+        "input": {
+          "s": "abc",
+          "p": "a.c"
+        },
+        "expected": true,
+        "name": "Dot in middle"
+      }
+    ],
+    "key_edge_cases": [
+      "Empty string with various patterns",
+      "Multiple stars in pattern",
+      ".* at beginning, middle, end",
+      "Pattern longer than string",
+      "String longer than pattern with stars"
+    ]
+  },
+  {
+    "id": 23,
+    "title": "Merge k Sorted Lists",
+    "difficulty": "Hard",
+    "description": "\nYou are given an array of k linked-lists lists, each linked-list is sorted in ascending order.\nMerge all the linked-lists into one sorted linked-list and return it.\n\nExample 1:\nInput: lists = [[1,4,5],[1,3,4],[2,6]]\nOutput: [1,1,2,3,4,4,5,6]\n\nExample 2:\nInput: lists = []\nOutput: []\n\nExample 3:\nInput: lists = [[]]\nOutput: []\n\nConstraints:\n- k == lists.length\n- 0 <= k <= 10^4\n- 0 <= lists[i].length <= 500\n- -10^4 <= lists[i].val <= 10^4\n- lists[i] is sorted in ascending order.\n\nREQUIREMENTS:\n- Time complexity: O(n log k) where n is total number of nodes\n- Space complexity: O(k) for heap solution\n",
+    "function_signature": "def mergeKLists(lists: List[Optional[ListNode]]) -> Optional[ListNode]:",
+    "optimal_time_complexity": "O(n log k)",
+    "optimal_space_complexity": "O(k)",
+    "optimal_solution": "\nimport heapq\n\nclass ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\ndef mergeKLists(lists):\n    heap = []\n    \n    # Add first node of each list to heap\n    for i, node in enumerate(lists):\n        if node:\n            heapq.heappush(heap, (node.val, i, node))\n    \n    dummy = ListNode(0)\n    current = dummy\n    \n    while heap:\n        val, i, node = heapq.heappop(heap)\n        current.next = node\n        current = current.next\n        \n        if node.next:\n            heapq.heappush(heap, (node.next.val, i, node.next))\n    \n    return dummy.next\n",
+    "test_cases": [
+      {
+        "input": {
+          "lists": [
+            [
+              1,
+              4,
+              5
+            ],
+            [
+              1,
+              3,
+              4
+            ],
+            [
+              2,
+              6
+            ]
+          ]
+        },
+        "expected": [
+          1,
+          1,
+          2,
+          3,
+          4,
+          4,
+          5,
+          6
+        ],
+        "name": "Example 1"
+      },
+      {
+        "input": {
+          "lists": []
+        },
+        "expected": [],
+        "name": "Empty array"
+      },
+      {
+        "input": {
+          "lists": [
+            []
+          ]
+        },
+        "expected": [],
+        "name": "Empty list"
+      },
+      {
+        "input": {
+          "lists": [
+            [
+              1
+            ],
+            [
+              0
+            ]
+          ]
+        },
+        "expected": [
+          0,
+          1
+        ],
+        "name": "Two lists"
+      },
+      {
+        "input": {
+          "lists": [
+            [
+              -10,
+              -9,
+              -9,
+              -3,
+              -1,
+              -1,
+              0
+            ],
+            [
+              -5
+            ],
+            [
+              4
+            ],
+            [
+              -8
+            ],
+            [],
+            [
+              -9,
+              -6,
+              -5,
+              -4,
+              -2,
+              2,
+              3
+            ],
+            [
+              -3,
+              -3,
+              -2,
+              -1,
+              0
+            ]
+          ]
+        },
+        "expected": [
+          -10,
+          -9,
+          -9,
+          -9,
+          -8,
+          -6,
+          -5,
+          -5,
+          -4,
+          -3,
+          -3,
+          -3,
+          -2,
+          -2,
+          -1,
+          -1,
+          -1,
+          0,
+          0,
+          2,
+          3,
+          4
+        ],
+        "name": "Complex lists"
+      }
+    ],
+    "key_edge_cases": [
+      "Empty lists array",
+      "Lists containing empty lists",
+      "Lists with negative numbers",
+      "Very large k (up to 10^4)",
+      "Lists of varying lengths"
+    ]
+  },
+  {
+    "id": 295,
+    "title": "Find Median from Data Stream",
+    "difficulty": "Hard",
+    "description": "\nThe median is the middle value in an ordered integer list. If the size of the list is even,\nthere is no middle value and the median is the mean of the two middle values.\n\nImplement the MedianFinder class:\n- MedianFinder() initializes the MedianFinder object.\n- void addNum(int num) adds the integer num from the data stream to the data structure.\n- double findMedian() returns the median of all elements so far.\n\nExample 1:\nInput:\n[\"MedianFinder\",\"addNum\",\"addNum\",\"findMedian\",\"addNum\",\"findMedian\"]\n[[],[1],[2],[],[3],[]]\nOutput: [null,null,null,1.5,null,2.0]\n\nConstraints:\n- -10^5 <= num <= 10^5\n- There will be at least one element in the data structure before calling findMedian.\n- At most 5 * 10^4 calls will be made to addNum and findMedian.\n\nREQUIREMENTS:\n- Time complexity: O(log n) for addNum, O(1) for findMedian\n- Space complexity: O(n)\n",
+    "class_signature": "\nclass MedianFinder:\n    def __init__(self):\n        # Initialize your data structure here\n    \n    def addNum(self, num: int) -> None:\n        # Add number to data structure\n    \n    def findMedian(self) -> float:\n        # Return median of all numbers\n",
+    "optimal_time_complexity": "O(log n) add, O(1) find",
+    "optimal_space_complexity": "O(n)",
+    "optimal_solution": "\nimport heapq\n\nclass MedianFinder:\n    def __init__(self):\n        self.small = []  # max heap (store negatives for max heap behavior)\n        self.large = []  # min heap\n    \n    def addNum(self, num):\n        if not self.small or num <= -self.small[0]:\n            heapq.heappush(self.small, -num)\n        else:\n            heapq.heappush(self.large, num)\n        \n        # Balance heaps\n        if len(self.small) > len(self.large) + 1:\n            heapq.heappush(self.large, -heapq.heappop(self.small))\n        elif len(self.large) > len(self.small):\n            heapq.heappush(self.small, -heapq.heappop(self.large))\n    \n    def findMedian(self):\n        if len(self.small) > len(self.large):\n            return -self.small[0]\n        return (-self.small[0] + self.large[0]) / 2.0\n",
+    "test_cases": [
+      {
+        "operations": [
+          "MedianFinder",
+          "addNum",
+          "addNum",
+          "findMedian",
+          "addNum",
+          "findMedian"
+        ],
+        "args": [
+          [],
+          [
+            1
+          ],
+          [
+            2
+          ],
+          [],
+          [
+            3
+          ],
+          []
+        ],
+        "expected": [
+          null,
+          null,
+          null,
+          1.5,
+          null,
+          2.0
+        ],
+        "name": "Example 1"
+      },
+      {
+        "operations": [
+          "MedianFinder",
+          "addNum",
+          "findMedian",
+          "addNum",
+          "findMedian",
+          "addNum",
+          "findMedian"
+        ],
+        "args": [
+          [],
+          [
+            1
+          ],
+          [],
+          [
+            2
+          ],
+          [],
+          [
+            3
+          ],
+          []
+        ],
+        "expected": [
+          null,
+          null,
+          1.0,
+          null,
+          1.5,
+          null,
+          2.0
+        ],
+        "name": "Gradual addition"
+      },
+      {
+        "operations": [
+          "MedianFinder",
+          "addNum",
+          "addNum",
+          "addNum",
+          "addNum",
+          "addNum",
+          "findMedian"
+        ],
+        "args": [
+          [],
+          [
+            5
+          ],
+          [
+            3
+          ],
+          [
+            4
+          ],
+          [
+            2
+          ],
+          [
+            1
+          ],
+          []
+        ],
+        "expected": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          3.0
+        ],
+        "name": "Five numbers"
+      }
+    ],
+    "key_edge_cases": [
+      "Single number median",
+      "Negative numbers",
+      "Large number of operations (50k)",
+      "Extreme values (-10^5 to 10^5)",
+      "Alternating add and find operations"
+    ]
+  },
+  {
+    "id": 297,
+    "title": "Serialize and Deserialize Binary Tree",
+    "difficulty": "Hard",
+    "description": "\nSerialization is the process of converting a data structure or object into a sequence of bits\nso that it can be stored in a file or memory buffer, or transmitted across a network connection\nlink to be reconstructed later in the same or another computer environment.\n\nDesign an algorithm to serialize and deserialize a binary tree. There is no restriction on how\nyour serialization/deserialization algorithm should work. You just need to ensure that a binary\ntree can be serialized to a string and this string can be deserialized to the original tree structure.\n\nExample 1:\nInput: root = [1,2,3,null,null,4,5]\nOutput: [1,2,3,null,null,4,5]\n\nConstraints:\n- The number of nodes in the tree is in the range [0, 10^4].\n- -1000 <= Node.val <= 1000\n\nREQUIREMENTS:\n- Both serialize and deserialize should work in O(n) time\n- Serialized string should be as compact as possible\n",
+    "class_signature": "\nclass TreeNode:\n    def __init__(self, x):\n        self.val = x\n        self.left = None\n        self.right = None\n\nclass Codec:\n    def serialize(self, root):\n        '''Encodes a tree to a single string.'''\n    \n    def deserialize(self, data):\n        '''Decodes your encoded data to tree.'''\n",
+    "optimal_time_complexity": "O(n)",
+    "optimal_space_complexity": "O(n)",
+    "optimal_solution": "\nclass TreeNode:\n    def __init__(self, x):\n        self.val = x\n        self.left = None\n        self.right = None\n\nclass Codec:\n    def serialize(self, root):\n        def dfs(node):\n            if not node:\n                return \"None,\"\n            return str(node.val) + \",\" + dfs(node.left) + dfs(node.right)\n        return dfs(root)\n    \n    def deserialize(self, data):\n        def dfs(nodes):\n            val = next(nodes)\n            if val == \"None\":\n                return None\n            node = TreeNode(int(val))\n            node.left = dfs(nodes)\n            node.right = dfs(nodes)\n            return node\n        \n        return dfs(iter(data.split(',')))\n",
+    "test_cases": [
+      {
+        "input": [
+          1,
+          2,
+          3,
+          null,
+          null,
+          4,
+          5
+        ],
+        "expected": [
+          1,
+          2,
+          3,
+          null,
+          null,
+          4,
+          5
+        ],
+        "name": "Example 1"
+      },
+      {
+        "input": [],
+        "expected": [],
+        "name": "Empty tree"
+      },
+      {
+        "input": [
+          1
+        ],
+        "expected": [
+          1
+        ],
+        "name": "Single node"
+      },
+      {
+        "input": [
+          1,
+          2,
+          null,
+          3,
+          null,
+          4,
+          null,
+          5
+        ],
+        "expected": [
+          1,
+          2,
+          null,
+          3,
+          null,
+          4,
+          null,
+          5
+        ],
+        "name": "Left skewed tree"
+      },
+      {
+        "input": [
+          -10,
+          9,
+          20,
+          null,
+          null,
+          15,
+          7
+        ],
+        "expected": [
+          -10,
+          9,
+          20,
+          null,
+          null,
+          15,
+          7
+        ],
+        "name": "Tree with negatives"
+      }
+    ],
+    "key_edge_cases": [
+      "Empty tree",
+      "Single node tree",
+      "Left/right skewed trees",
+      "Full binary tree",
+      "Tree with duplicate values",
+      "Large tree (10^4 nodes)",
+      "Negative and zero values"
+    ]
+  }
+]
